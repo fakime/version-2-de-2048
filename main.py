@@ -15,6 +15,7 @@ window.config(background="#888888")
 intervaley = 90
 intervalex = 90
 nmove = 0
+
 # frame1
 frame1 = Frame(window, highlightbackground="black", highlightthickness=2)
 frame1.place(x=320, y=80)
@@ -53,7 +54,7 @@ list_colors = {
     4096: "#E69138",
     8192: "#8E7CC3",
 }
-
+#tableau des valeur pour la fonc tasse4
 numbers = [[2, 2, 4, 4], [0, 0, 0, 0], [0, 2, 2, 4], [0, 2, 2, 8]]
 labels = [[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
 
@@ -146,6 +147,7 @@ def display():
             else:
                 labels[line][col].config(text=numbers[line][col], bg=list_colors[numbers[line][col]])
 
+#fonction de new button
 def new_button():
     global numbers
     numbers = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 2, 4]]
@@ -155,10 +157,13 @@ def new_button():
 new_button = tkinter.Button(window, command=new_button, text="Nouveau", background="#274E13", fg="#888888")
 new_button.place(x=395, y=180)
 
+#assignation des touches a,w,s,d
 window.bind("d",moveright)
 window.bind("a",moveleft)
 window.bind("w",moveup)
 window.bind("s",movedown)
+
+
 display()
 window.mainloop()
 
