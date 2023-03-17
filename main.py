@@ -5,6 +5,7 @@ jan 2023
 import tkinter
 from tkinter import *
 import random
+import copy
 from tkinter import messagebox
 
 window = Tk()
@@ -110,47 +111,56 @@ def rondom():
 
 #la fonction ici sert tasser vers la gauche
 def moveleft(event):
+    global nmove
     movetotal = 0
-    for ligne in range (4):
-        n = 0
-        [numbers[ligne][0],numbers[ligne][1],numbers[ligne][2],numbers[ligne][3],n]= tasse_4(numbers[ligne][0],numbers[ligne][1],numbers[ligne][2],numbers[ligne][3])
-        movetotal += n;
+    for ligne in range(4):
+        [numbers[ligne][0],numbers[ligne][1],numbers[ligne][2],numbers[ligne][3],nmove]= tasse_4(numbers[ligne][0],numbers[ligne][1],numbers[ligne][2],numbers[ligne][3])
+        movetotal += nmove
+
+    if movetotal == 0:
+        print("Move")
+    else:
+        rondom()
     display()
-    rondom()
-    print(movetotal)
 
 #la fonction ici sert tasser vers la droite
 def moveright(event):
     movetotal = 0
-    for ligne in range (4):
-        n = 0
-        [numbers[ligne][3],numbers[ligne][2],numbers[ligne][1],numbers[ligne][0],n] = tasse_4(numbers[ligne][3],numbers[ligne][2],numbers[ligne][1],numbers[ligne][0])
-        movetotal += n;
+    for ligne in range(4):
+        [numbers[ligne][3],numbers[ligne][2],numbers[ligne][1],numbers[ligne][0],nmove] = tasse_4(numbers[ligne][3],numbers[ligne][2],numbers[ligne][1],numbers[ligne][0])
+        movetotal += nmove
+    if movetotal == 0:
+        print("Move")
+    else:
+        rondom()
     display()
-    rondom()
-    print(movetotal)
+
 
 #la fonction ici sert à tasser vers l'haut
 def moveup(event):
     movetotal = 0
-    for line in range (4):
-        n = 0
-        [numbers[0][line],numbers[1][line],numbers[2][line],numbers[3][line],n] = tasse_4(numbers[0][line],numbers[1][line],numbers[2][line],numbers[3][line])
-        movetotal += n;
+    for line in range(4):
+        [numbers[0][line],numbers[1][line],numbers[2][line],numbers[3][line],nmove] = tasse_4(numbers[0][line],numbers[1][line],numbers[2][line],numbers[3][line])
+        movetotal += nmove
+    if movetotal == 0:
+        print("Move")
+    else:
+        rondom()
     display()
-    rondom()
-    print(movetotal)
 
 #la function ici sert à tasser vers le bas
 def movedown(event):
     movetotal = 0
-    for line in range (4):
-        n = 0
-        [numbers[3][line],numbers[2][line],numbers[1][line],numbers[0][line],n] = tasse_4(numbers[3][line],numbers[2][line],numbers[1][line],numbers[0][line])
-        movetotal += n;
+    for line in range(4):
+        [numbers[3][line],numbers[2][line],numbers[1][line],numbers[0][line],nmove] = tasse_4(numbers[3][line],numbers[2][line],numbers[1][line],numbers[0][line])
+        movetotal += nmove
+    if movetotal == 0:
+        print("Move")
+    else:
+        rondom()
     display()
-    rondom()
-    print(movetotal)
+
+
 
 #la fonction ici sert à refresh le jeu actuel
 def display():
@@ -168,6 +178,39 @@ def new_button():
     rondom()
     rondom()
     display()
+
+
+#perdu ou gagne
+def movement():
+    global numbers
+
+    #copied my numbers
+    numbers2 = copy.deepcopy(numbers)
+    #move left
+    for line in range(4):
+        [numbers2[3][line], numbers2[2][line], numbers2[1][line], numbers2[0][line]] = tasse_4(numbers2[3][line],numbers2[2][line],numbers2[1][line],numbers2[0][line])
+    #move right
+    for line in range(4):
+        [numbers2[3][line], numbers2[2][line], numbers2[1][line], numbers2[0][line]] = tasse_4(numbers[3][line],numbers2[2][line],numbers2[1][line],numbers2[0][line])
+    #move up
+    for line in range(4):
+        [numbers2[3][line], numbers2[2][line], numbers2[1][line], numbers2[0][line]] = tasse_4(numbers2[3][line],numbers2[2][line],numbers2[1][line],numbers2[0][line])
+    #move down
+    for line in range(4):
+        [numbers2[3][line], numbers2[2][line], numbers2[1][line], numbers2[0][line]] = tasse_4(numbers[3][line],numbers2[2][line],numbers2[1][line],numbers2[0][line])
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # new button (aide Carlos>aide Athos)
 new_button = tkinter.Button(window, command=new_button, text="Nouveau", background="#274E13", fg="#888888")
