@@ -4,6 +4,7 @@ jan 2023
 2048 version 1.0 """
 import tkinter
 from tkinter import *
+import random
 from tkinter import messagebox
 
 window = Tk()
@@ -55,7 +56,7 @@ list_colors = {
     8192: "#8E7CC3",
 }
 #tableau des valeur pour la fonc tasse4
-numbers = [[2, 2, 4, 4], [0, 0, 0, 0], [0, 2, 2, 4], [0, 2, 2, 8]]
+numbers = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 2, 2]]
 labels = [[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
 
 for line in range(len(numbers)):
@@ -93,10 +94,19 @@ def tasse_4(a,b,c,d):
         c,d = 2*c,0
         nmove += 1
 
-
     # ici on retourne les cinq valeurs en un tableau
     temp=[a,b,c,d,nmove] #tableau temporaire de fin
     return temp
+
+#la fonctione qui sert à random le placement de un chiffres
+def rondom():
+    randomline = random.randint(0, 3)
+    randomcolumn = random.randint(0, 3)
+    while numbers[randomline][randomcolumn]>0:
+        randomline = random.randint(0, 3)
+        randomcolumn = random.randint(0, 3)
+    numbers[randomline][randomcolumn] = 2
+    display()
 
 #la fonction ici sert tasser vers la gauche
 def moveleft(event):
@@ -106,6 +116,7 @@ def moveleft(event):
         [numbers[ligne][0],numbers[ligne][1],numbers[ligne][2],numbers[ligne][3],n]= tasse_4(numbers[ligne][0],numbers[ligne][1],numbers[ligne][2],numbers[ligne][3])
         movetotal += n;
     display()
+    rondom()
     print(movetotal)
 
 #la fonction ici sert tasser vers la droite
@@ -116,6 +127,7 @@ def moveright(event):
         [numbers[ligne][3],numbers[ligne][2],numbers[ligne][1],numbers[ligne][0],n] = tasse_4(numbers[ligne][3],numbers[ligne][2],numbers[ligne][1],numbers[ligne][0])
         movetotal += n;
     display()
+    rondom()
     print(movetotal)
 
 #la fonction ici sert à tasser vers l'haut
@@ -126,6 +138,7 @@ def moveup(event):
         [numbers[0][line],numbers[1][line],numbers[2][line],numbers[3][line],n] = tasse_4(numbers[0][line],numbers[1][line],numbers[2][line],numbers[3][line])
         movetotal += n;
     display()
+    rondom()
     print(movetotal)
 
 #la function ici sert à tasser vers le bas
@@ -136,6 +149,7 @@ def movedown(event):
         [numbers[3][line],numbers[2][line],numbers[1][line],numbers[0][line],n] = tasse_4(numbers[3][line],numbers[2][line],numbers[1][line],numbers[0][line])
         movetotal += n;
     display()
+    rondom()
     print(movetotal)
 
 #la fonction ici sert à refresh le jeu actuel
@@ -150,7 +164,9 @@ def display():
 #fonction de new button
 def new_button():
     global numbers
-    numbers = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 2, 4]]
+    numbers = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+    rondom()
+    rondom()
     display()
 
 # new button (aide Carlos>aide Athos)
@@ -162,7 +178,6 @@ window.bind("d",moveright)
 window.bind("a",moveleft)
 window.bind("w",moveup)
 window.bind("s",movedown)
-
 
 display()
 window.mainloop()
