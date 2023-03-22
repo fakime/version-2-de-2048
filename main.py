@@ -12,11 +12,14 @@ window = Tk()
 window.title("2048 by Faki")
 window.geometry("495x700+30+80")
 window.config(background="#888888")
-
+window.resizable(width=False,height=False)
 # variables
 intervaley = 90
 intervalex = 90
 nmove = 0
+score = 0
+first2048 = 1
+first8192 = 1
 
 # frame1
 frame1 = Frame(window, highlightbackground="black", highlightthickness=2)
@@ -29,7 +32,7 @@ lbl_2048.pack()
 frame2 = Frame(window, highlightbackground="#4F7942", highlightthickness=3)
 frame2.place(x=300, y=122)
 
-lbl_scr = Label(frame2, text="Score", background="#888888", height=3, width=9, fg="black")
+lbl_scr = Label(frame2, text=f"Score\n {score}", background="#888888", height=3, width=9, fg="black")
 lbl_scr.pack()
 
 # frame3
@@ -57,7 +60,7 @@ list_colors = {
     8192: "#8E7CC3",
 }
 #tableau des valeur pour la fonc tasse4
-numbers = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 2, 2]]
+numbers = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 8192, 0, 0]]
 labels = [[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
 
 for line in range(len(numbers)):
@@ -69,11 +72,13 @@ for line in range(len(numbers)):
 # functions
 # reçoit 4 nombres, tasse vers le a,  et en renvoie 5
 def tasse_4(a,b,c,d):
+    global score
     nmove=0 #sert à savoir si on a réussi à bouger
     # ici le code va manipuler a,b,c et d
     if (c == 0 and d > 0):
         c,d = d, 0
         nmove+=1
+
 
     if (b == 0 and c > 0):
         b,c,d = c, d, 0
@@ -86,18 +91,81 @@ def tasse_4(a,b,c,d):
     if (a==b and a>0):
         a,b,c,d = 2*a,c,d,0
         nmove += 1
-
+        score+= 2*a
     if (b==c and b>0):
         b,c,d= 2* b,d,0
         nmove += 1
-
+        score+=2*b
     if (c==d and c>0):
         c,d = 2*c,0
         nmove += 1
+        score+=2*c
 
+    lbl_scr.config(text=f"Score\n {score}")
+    print(score)
     # ici on retourne les cinq valeurs en un tableau
     temp=[a,b,c,d,nmove] #tableau temporaire de fin
     return temp
+
+
+#la fonction ici sert à refresh le jeu actuel
+def display():
+    for line in range(len(numbers)):
+        for col in range(len(numbers[line])):
+            if numbers[line][col] == 0:
+                labels[line][col].config(text="", bg=list_colors[numbers[line][col]])
+            else:
+                labels[line][col].config(text=numbers[line][col], bg=list_colors[numbers[line][col]])
+
+#perdu
+def movement():
+    global numbers
+    moveperdu = 0
+    #copied my numbers
+    numbers2 = copy.deepcopy(numbers)
+    #move left
+    for ligne in range(4):
+        [numbers2[ligne][0], numbers2[ligne][1], numbers2[ligne][2], numbers2[ligne][3],nmove] = tasse_4(numbers2[ligne][0],numbers2[ligne][1],numbers2[ligne][2],numbers2[ligne][3])
+        moveperdu += nmove
+    #move right
+    for ligne in range(4):
+        [numbers2[ligne][3], numbers2[ligne][2], numbers2[ligne][1], numbers2[ligne][0], nmove] = tasse_4(numbers2[ligne][3],numbers2[ligne][2],numbers2[ligne][1],numbers2[ligne][0])
+        moveperdu += nmove
+    #move up
+    for line in range(4):
+        [numbers2[0][line], numbers2[1][line], numbers2[2][line], numbers2[3][line], nmove] = tasse_4(numbers2[0][line],numbers2[1][line],numbers2[2][line],numbers2[3][line])
+        moveperdu += nmove
+    #move down
+    for line in range(4):
+        [numbers2[3][line], numbers2[2][line], numbers2[1][line], numbers2[0][line], nmove] = tasse_4(numbers2[3][line],numbers2[2][line],numbers2[1][line],numbers2[0][line])
+    moveperdu += nmove
+
+    if moveperdu == 0:
+        messagebox.showinfo("PERDU","Vous avez perdu !")
+        window.config(background="purple")
+#gagne
+def movement2():
+    global first8192, first2048
+    for line in range(len(numbers)):
+        for col in range(len(numbers[line])):
+            if first8192 == 1:
+                if numbers[line][col] == 8192:
+                    messagebox.showinfo("WIN", "Vous avez WIN!")
+                    window.config(background="purple")
+                    first8192 = 0
+            if first2048 == 1:
+                if numbers[line][col]== 2048:
+                    messagebox.showinfo("2048", "Vous avez fait 2048!")
+                    first2048 = 0
+
+
+
+#generer avec une chance de 80-20 % (aide de thibault)
+def spawncase2_4():
+    if random.random() >= 0.8:
+        return 4
+    else:
+        return 2
 
 #la fonctione qui sert à random le placement de un chiffres
 def rondom():
@@ -106,8 +174,11 @@ def rondom():
     while numbers[randomline][randomcolumn]>0:
         randomline = random.randint(0, 3)
         randomcolumn = random.randint(0, 3)
-    numbers[randomline][randomcolumn] = 2
+    numbers[randomline][randomcolumn] = spawncase2_4()
     display()
+
+rondom()
+rondom()
 
 #la fonction ici sert tasser vers la gauche
 def moveleft(event):
@@ -121,6 +192,8 @@ def moveleft(event):
         print("Move")
     else:
         rondom()
+        movement2()
+        movement()
     display()
 
 #la fonction ici sert tasser vers la droite
@@ -133,6 +206,9 @@ def moveright(event):
         print("Move")
     else:
         rondom()
+        movement2()
+        movement()
+
     display()
 
 
@@ -146,6 +222,9 @@ def moveup(event):
         print("Move")
     else:
         rondom()
+        movement2()
+        movement()
+
     display()
 
 #la function ici sert à tasser vers le bas
@@ -158,48 +237,24 @@ def movedown(event):
         print("Move")
     else:
         rondom()
+        movement2()
+        movement()
     display()
 
 
 
-#la fonction ici sert à refresh le jeu actuel
-def display():
-    for line in range(len(numbers)):
-        for col in range(len(numbers[line])):
-            if numbers[line][col] == 0:
-                labels[line][col].config(text="", bg=list_colors[numbers[line][col]])
-            else:
-                labels[line][col].config(text=numbers[line][col], bg=list_colors[numbers[line][col]])
+
 
 #fonction de new button
 def new_button():
-    global numbers
+    global numbers,score
     numbers = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+    score = 0
+    lbl_scr.config(text=f"Score\n {score}")
+
     rondom()
     rondom()
     display()
-
-
-#perdu ou gagne
-def movement():
-    global numbers
-
-    #copied my numbers
-    numbers2 = copy.deepcopy(numbers)
-    #move left
-    for line in range(4):
-        [numbers2[3][line], numbers2[2][line], numbers2[1][line], numbers2[0][line]] = tasse_4(numbers2[3][line],numbers2[2][line],numbers2[1][line],numbers2[0][line])
-    #move right
-    for line in range(4):
-        [numbers2[3][line], numbers2[2][line], numbers2[1][line], numbers2[0][line]] = tasse_4(numbers[3][line],numbers2[2][line],numbers2[1][line],numbers2[0][line])
-    #move up
-    for line in range(4):
-        [numbers2[3][line], numbers2[2][line], numbers2[1][line], numbers2[0][line]] = tasse_4(numbers2[3][line],numbers2[2][line],numbers2[1][line],numbers2[0][line])
-    #move down
-    for line in range(4):
-        [numbers2[3][line], numbers2[2][line], numbers2[1][line], numbers2[0][line]] = tasse_4(numbers[3][line],numbers2[2][line],numbers2[1][line],numbers2[0][line])
-
-
 
 
 
