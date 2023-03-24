@@ -101,6 +101,7 @@ def tasse_4(a,b,c,d):
         nmove += 1
         score+=2*c
 
+#afficher le score
     lbl_scr.config(text=f"Score\n {score}")
     print(score)
     # ici on retourne les cinq valeurs en un tableau
@@ -142,7 +143,7 @@ def movement():
 
     if moveperdu == 0:
         messagebox.showinfo("PERDU","Vous avez perdu !")
-        window.config(background="purple")
+        window.config(background="#6EA482")
 #gagne
 def movement2():
     global first8192, first2048
@@ -151,13 +152,12 @@ def movement2():
             if first8192 == 1:
                 if numbers[line][col] == 8192:
                     messagebox.showinfo("WIN", "Vous avez WIN!")
-                    window.config(background="purple")
+                    window.config(background="#4C54B4")
                     first8192 = 0
             if first2048 == 1:
                 if numbers[line][col]== 2048:
                     messagebox.showinfo("2048", "Vous avez fait 2048!")
                     first2048 = 0
-
 
 
 #generer avec une chance de 80-20 % (aide de thibault)
@@ -241,29 +241,16 @@ def movedown(event):
         movement()
     display()
 
-
-
-
-
 #fonction de new button
 def new_button():
     global numbers,score
     numbers = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
     score = 0
     lbl_scr.config(text=f"Score\n {score}")
-
+    window.config(background="#888888")
     rondom()
     rondom()
     display()
-
-
-
-
-
-
-
-
-
 
 
 
