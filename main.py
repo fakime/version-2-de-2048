@@ -13,6 +13,7 @@ window.title("2048 by Faki")
 window.geometry("495x700+30+80")
 window.config(background="#888888")
 window.resizable(width=False,height=False)
+
 # variables
 intervaley = 90
 intervalex = 90
@@ -30,17 +31,10 @@ lbl_2048.pack()
 
 # frame2
 frame2 = Frame(window, highlightbackground="#4F7942", highlightthickness=3)
-frame2.place(x=300, y=122)
+frame2.place(x=350, y=122)
 
 lbl_scr = Label(frame2, text=f"Score\n {score}", background="#888888", height=3, width=9, fg="black")
 lbl_scr.pack()
-
-# frame3
-frame3 = Frame(window, highlightbackground="#4F7942", highlightthickness=3)
-frame3.place(x=380, y=122)
-
-lbl_tpscr = Label(frame3, text="Top Score", background="#888888", height=3, width=9, fg="black")
-lbl_tpscr.pack()
 
 # list de couleurs
 list_colors = {
@@ -78,7 +72,6 @@ def tasse_4(a,b,c,d):
     if (c == 0 and d > 0):
         c,d = d, 0
         nmove+=1
-
 
     if (b == 0 and c > 0):
         b,c,d = c, d, 0
@@ -252,11 +245,9 @@ def new_button():
     rondom()
     display()
 
-
-
 # new button (aide Carlos>aide Athos)
 new_button = tkinter.Button(window, command=new_button, text="Nouveau", background="#274E13", fg="#888888")
-new_button.place(x=395, y=180)
+new_button.place(x=360, y=180)
 
 #assignation des touches a,w,s,d
 window.bind("d",moveright)
