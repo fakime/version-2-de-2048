@@ -53,8 +53,11 @@ list_colors = {
     4096: "#E69138",
     8192: "#8E7CC3",
 }
+
+
+
 #tableau des valeur pour la fonc tasse4
-numbers = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 8192, 0, 0]]
+numbers = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 labels = [[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
 
 for line in range(len(numbers)):
@@ -65,7 +68,7 @@ for line in range(len(numbers)):
 
 # functions
 # reçoit 4 nombres, tasse vers le a,  et en renvoie 5
-def tasse_4(a,b,c,d):
+def tasse_4(a,b,c,d,bscore):
     global score
     nmove=0 #sert à savoir si on a réussi à bouger
     # ici le code va manipuler a,b,c et d
@@ -84,15 +87,19 @@ def tasse_4(a,b,c,d):
     if (a==b and a>0):
         a,b,c,d = 2*a,c,d,0
         nmove += 1
-        score+= 2*a
+        if bscore:
+            score+= a
+
     if (b==c and b>0):
         b,c,d= 2* b,d,0
         nmove += 1
-        score+=2*b
+        if bscore:
+            score+= b
     if (c==d and c>0):
         c,d = 2*c,0
         nmove += 1
-        score+=2*c
+        if bscore:
+            score+= c
 
 #afficher le score
     lbl_scr.config(text=f"Score\n {score}")
@@ -111,7 +118,7 @@ def display():
             else:
                 labels[line][col].config(text=numbers[line][col], bg=list_colors[numbers[line][col]])
 
-#perdu
+#cette fonction sert à savoir si la partie est perdu
 def movement():
     global numbers
     moveperdu = 0
@@ -119,25 +126,25 @@ def movement():
     numbers2 = copy.deepcopy(numbers)
     #move left
     for ligne in range(4):
-        [numbers2[ligne][0], numbers2[ligne][1], numbers2[ligne][2], numbers2[ligne][3],nmove] = tasse_4(numbers2[ligne][0],numbers2[ligne][1],numbers2[ligne][2],numbers2[ligne][3])
+        [numbers2[ligne][0], numbers2[ligne][1], numbers2[ligne][2], numbers2[ligne][3],nmove] = tasse_4(numbers2[ligne][0],numbers2[ligne][1],numbers2[ligne][2],numbers2[ligne][3],False)
         moveperdu += nmove
     #move right
     for ligne in range(4):
-        [numbers2[ligne][3], numbers2[ligne][2], numbers2[ligne][1], numbers2[ligne][0], nmove] = tasse_4(numbers2[ligne][3],numbers2[ligne][2],numbers2[ligne][1],numbers2[ligne][0])
+        [numbers2[ligne][3], numbers2[ligne][2], numbers2[ligne][1], numbers2[ligne][0], nmove] = tasse_4(numbers2[ligne][3],numbers2[ligne][2],numbers2[ligne][1],numbers2[ligne][0],False)
         moveperdu += nmove
     #move up
     for line in range(4):
-        [numbers2[0][line], numbers2[1][line], numbers2[2][line], numbers2[3][line], nmove] = tasse_4(numbers2[0][line],numbers2[1][line],numbers2[2][line],numbers2[3][line])
+        [numbers2[0][line], numbers2[1][line], numbers2[2][line], numbers2[3][line], nmove] = tasse_4(numbers2[0][line],numbers2[1][line],numbers2[2][line],numbers2[3][line],False)
         moveperdu += nmove
     #move down
     for line in range(4):
-        [numbers2[3][line], numbers2[2][line], numbers2[1][line], numbers2[0][line], nmove] = tasse_4(numbers2[3][line],numbers2[2][line],numbers2[1][line],numbers2[0][line])
+        [numbers2[3][line], numbers2[2][line], numbers2[1][line], numbers2[0][line], nmove] = tasse_4(numbers2[3][line],numbers2[2][line],numbers2[1][line],numbers2[0][line],False)
     moveperdu += nmove
 
     if moveperdu == 0:
         messagebox.showinfo("PERDU","Vous avez perdu !")
         window.config(background="#6EA482")
-#gagne
+#cette fonction sert à savoir si la partie est gagner
 def movement2():
     global first8192, first2048
     for line in range(len(numbers)):
@@ -153,7 +160,7 @@ def movement2():
                     first2048 = 0
 
 
-#generer avec une chance de 80-20 % (aide de thibault)
+#generer avec une chance de 80-20 %
 def spawncase2_4():
     if random.random() >= 0.8:
         return 4
@@ -178,7 +185,7 @@ def moveleft(event):
     global nmove
     movetotal = 0
     for ligne in range(4):
-        [numbers[ligne][0],numbers[ligne][1],numbers[ligne][2],numbers[ligne][3],nmove]= tasse_4(numbers[ligne][0],numbers[ligne][1],numbers[ligne][2],numbers[ligne][3])
+        [numbers[ligne][0],numbers[ligne][1],numbers[ligne][2],numbers[ligne][3],nmove]= tasse_4(numbers[ligne][0],numbers[ligne][1],numbers[ligne][2],numbers[ligne][3],True)
         movetotal += nmove
 
     if movetotal == 0:
@@ -193,7 +200,7 @@ def moveleft(event):
 def moveright(event):
     movetotal = 0
     for ligne in range(4):
-        [numbers[ligne][3],numbers[ligne][2],numbers[ligne][1],numbers[ligne][0],nmove] = tasse_4(numbers[ligne][3],numbers[ligne][2],numbers[ligne][1],numbers[ligne][0])
+        [numbers[ligne][3],numbers[ligne][2],numbers[ligne][1],numbers[ligne][0],nmove] = tasse_4(numbers[ligne][3],numbers[ligne][2],numbers[ligne][1],numbers[ligne][0],True)
         movetotal += nmove
     if movetotal == 0:
         print("Move")
@@ -209,7 +216,7 @@ def moveright(event):
 def moveup(event):
     movetotal = 0
     for line in range(4):
-        [numbers[0][line],numbers[1][line],numbers[2][line],numbers[3][line],nmove] = tasse_4(numbers[0][line],numbers[1][line],numbers[2][line],numbers[3][line])
+        [numbers[0][line],numbers[1][line],numbers[2][line],numbers[3][line],nmove] = tasse_4(numbers[0][line],numbers[1][line],numbers[2][line],numbers[3][line],True)
         movetotal += nmove
     if movetotal == 0:
         print("Move")
@@ -224,7 +231,7 @@ def moveup(event):
 def movedown(event):
     movetotal = 0
     for line in range(4):
-        [numbers[3][line],numbers[2][line],numbers[1][line],numbers[0][line],nmove] = tasse_4(numbers[3][line],numbers[2][line],numbers[1][line],numbers[0][line])
+        [numbers[3][line],numbers[2][line],numbers[1][line],numbers[0][line],nmove] = tasse_4(numbers[3][line],numbers[2][line],numbers[1][line],numbers[0][line],True)
         movetotal += nmove
     if movetotal == 0:
         print("Move")
